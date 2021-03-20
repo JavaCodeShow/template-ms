@@ -19,15 +19,15 @@ public class FcsClientFallback implements FallbackFactory<FcsClient> {
         return null;
     }
 
-    // @Override
-    // public FcsClient create(Throwable throwable) {
-    //     log.error("调用FCS失败：", throwable);
-    //     return new FcsClient() {
-    //         @Override
-    //         public BaseResult<List<CompanyDTO>> getCompanyListByLevel(CompanyRequestDTO companyRequestDTO) {
-    //             ServiceException serviceException = FeignUtil.decodeFeignException("获取会员等级对应的所有货主公司", throwable);
-    //             return BaseResult.createFailResult(serviceException.getMsg(), serviceException.getCode());
-    //         }
-    //     };
-    // }
+    @Override
+    public FcsClient create(Throwable throwable) {
+        log.error("调用FCS失败：", throwable);
+        return new FcsClient() {
+            @Override
+            public BaseResult<List<CompanyDTO>> getCompanyListByLevel(CompanyRequestDTO companyRequestDTO) {
+                ServiceException serviceException = FeignUtil.decodeFeignException("获取会员等级对应的所有货主公司", throwable);
+                return BaseResult.createFailResult(serviceException.getMsg(), serviceException.getCode());
+            }
+        };
+    }
 }

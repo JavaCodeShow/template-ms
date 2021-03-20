@@ -1,12 +1,13 @@
-package com.jf.template.service;
+package com.jf.css.service;
 
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @Author 张云和
- * @Date 2018/4/10
- * @Time 16:53
+ * @author 江峰
+ * @email feng.jiang@marketin.cn
+ * @create 2021-03-20 23:11:05
+ * @since
  */
 public interface RedisService {
 
@@ -16,6 +17,15 @@ public interface RedisService {
      * @param key
      * @param value
      * @return
+     */
+    void set(String key, String value);
+
+    /**
+     * string 类型 设置 含过期时间
+     *
+     * @param key
+     * @param value
+     * @param expire
      */
     void set(String key, String value, long expire);
 
@@ -69,7 +79,7 @@ public interface RedisService {
      * @param field
      * @return
      */
-    String hGet(String key, String field);
+    Object hGet(String key, String field);
 
     /**
      * 批量 hash 设置值
@@ -102,8 +112,10 @@ public interface RedisService {
     /**
      * 设置生命周期
      *
-     * @param key    redis key
-     * @param second 过期时间，单位为秒
+     * @param key
+     *            redis key
+     * @param second
+     *            过期时间，单位为秒
      * @return
      */
     Boolean setExpire(String key, long second);
@@ -111,7 +123,8 @@ public interface RedisService {
     /**
      * 获取过期时间
      *
-     * @param key redis key
+     * @param key
+     *            redis key
      * @return
      */
     long getExpire(String key);
@@ -119,27 +132,35 @@ public interface RedisService {
     /**
      * 获取锁
      *
-     * @param expire   过期时间
-     * @param keyValue key的值
-     * @param lockKey  key
+     * @param expire
+     *            过期时间 单位秒
+     * @param lockKey
+     *            key
+     * @param keyValue
+     *            key的值，一般是当前时间毫秒
      * @return
      */
-    boolean tryLock(int expire, String lockKey, String keyValue);
+    boolean tryLock(String lockKey, String keyValue, int expire);
 
     /**
      * 解锁
      *
-     * @param lockKey       key
-     * @param expireTimeStr key的值
+     * @param lockKey
+     *            key
+     * @param expireTimeStr
+     *            key的值
      */
     void unLock(String lockKey, String expireTimeStr);
 
     /**
      * 设置值，支持兵法设置
      *
-     * @param lockKey  redisKey
-     * @param keyValue key的value
-     * @param expire   过期时间
+     * @param lockKey
+     *            redisKey
+     * @param keyValue
+     *            key的value
+     * @param expire
+     *            过期时间
      */
     void setIfAbsent(String lockKey, String keyValue, long expire);
 

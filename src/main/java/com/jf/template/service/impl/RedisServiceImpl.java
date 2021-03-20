@@ -1,23 +1,25 @@
-package com.jf.template.service.impl;
+package com.jf.css.service.impl;
 
-import com.jf.template.service.RedisService;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import com.jf.css.service.RedisService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * redis工具
- *
- * @Author 张云和
- * @Date 2018/4/10
- * @Time 16:54
+ * @author 江峰
+ * @email feng.jiang@marketin.cn
+ * @create 2021-03-20 23:11:05
+ * @since
  */
 @Service
 @Slf4j
@@ -30,8 +32,14 @@ public class RedisServiceImpl implements RedisService {
     private StringRedisTemplate stringRedisTemplate;
 
     @Override
+    public void set(final String key, final String value) {
+        stringRedisTemplate.opsForValue().set(key, value);
+    }
+
+    @Override
     public void set(final String key, final String value, long expire) {
-        stringRedisTemplate.opsForValue().set(key, value, expire, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForValue().set(key, value, expire,
+                TimeUnit.SECONDS);
     }
 
     @Override
@@ -88,8 +96,8 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public String hGet(String key, String field) {
-        return null;
+    public Object hGet(String key, String field) {
+        return stringRedisTemplate.opsForHash().get(key, field);
     }
 
     @Override
@@ -108,7 +116,8 @@ public class RedisServiceImpl implements RedisService {
     /**
      * 根据key 获取过期时间
      *
-     * @param key 键 不能为null
+     * @param key
+     *            键 不能为null
      * @return 时间(秒) 返回0代表为永久有效
      */
     @Override
@@ -116,21 +125,34 @@ public class RedisServiceImpl implements RedisService {
         return stringRedisTemplate.getExpire(key);
     }
 
+    /**
+     *
+     * @param expire
+     *            过期时间 单位秒
+     * @param lockKey
+     *            key
+     * @param keyValue
+     *            key的值，一般是当前时间毫秒
+     * @return
+     */
     @Override
-    public boolean tryLock(int expire, String lockKey, String keyValue) {
+    public boolean tryLock(String lockKey, String keyValue, int expire) {
 
-        Boolean result = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, keyValue, expire, TimeUnit.SECONDS);
+        Boolean result = redisTemplate.opsForValue().setIfAbsent(lockKey,
+                keyValue, expire, TimeUnit.SECONDS);
         log.info("get lock = {}", result);
         if (null != result && result) {
             return true;
         }
         // 如果锁超时 ***
         String currentValue = stringRedisTemplate.opsForValue().get(lockKey);
-        if (!StringUtils.isEmpty(currentValue) && Long.parseLong(currentValue) < System.currentTimeMillis()) {
+        if (!StringUtils.isEmpty(currentValue) && Long.parseLong(currentValue)
+                + (expire * 1000L) < System.currentTimeMillis()) {
             // key删除
             stringRedisTemplate.delete(lockKey);
             // 再次获取
-            Boolean res = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, keyValue, expire, TimeUnit.SECONDS);
+            Boolean res = stringRedisTemplate.opsForValue().setIfAbsent(lockKey,
+                    keyValue, expire, TimeUnit.SECONDS);
             return null != res && res;
         }
         return false;
@@ -149,7 +171,8 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void setIfAbsent(String lockKey, String keyValue, long expire) {
 
-        stringRedisTemplate.opsForValue().setIfAbsent(lockKey, keyValue, expire, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForValue().setIfAbsent(lockKey, keyValue, expire,
+                TimeUnit.SECONDS);
     }
 
 }
