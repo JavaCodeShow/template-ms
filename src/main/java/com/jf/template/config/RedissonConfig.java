@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * redisson配置
  *
- * @author 张云和
+ * @author 江峰
  * @date 2020/5/28 11:12 上午
  */
 @Configuration
