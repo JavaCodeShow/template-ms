@@ -1,4 +1,4 @@
-package com.jf.template.common.constant;
+package com.jf.template.meta.constant;
 
 /**
  * @author 江峰

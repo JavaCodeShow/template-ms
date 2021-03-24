@@ -1,8 +1,8 @@
 package com.jf.template.lock;
 
-import com.jf.template.common.constant.CommonConstant;
-
 import java.lang.annotation.*;
+
+import com.jf.template.meta.constant.CommonConstant;
 
 /**
  * 防重复提交

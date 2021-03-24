@@ -1,11 +1,12 @@
 package com.jf.template.lock;
 
-import com.jf.template.common.constant.CommonConstant;
+import java.lang.reflect.Method;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Method;
+import com.jf.template.meta.constant.CommonConstant;
 
 /**
  * @author luxinghui
